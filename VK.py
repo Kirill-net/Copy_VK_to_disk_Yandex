@@ -60,18 +60,18 @@ class VkApi:
 
     def save_files_YD(self):                  # функция записи
         result = []                            # определяем локальные переменные
-        likes_ = []
+        likes_list = []
         quantity = 1
         data = self.get_photos()
         for item in data['response']['items']:
             if quantity <= self.counts:                     # определяем кол-во файлов в запись (5 по умолчанию)
                 size = item['sizes'][-5]['type']
                 photo_url = item['sizes'][-5]['url']
-                if item['likes']['count'] in likes_:
+                if item['likes']['count'] in likes_list:
                     name = f"{item['likes']['count']}_{item['date']}"    # корректируем имя файла при совпадении
                 else:
                     name = item['likes']['count']
-                    likes_ += [name]
+                    likes_list += [name]
                 self.save_file(photo_url, name)                     # записывам файл через ф-цию save_file
                 print(f'Загружено {quantity} фото')                  # лог загрузки файлов на Ядиск
                 quantity += 1
