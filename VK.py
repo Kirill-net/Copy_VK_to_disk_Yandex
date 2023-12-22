@@ -38,14 +38,11 @@ class VK_API:
         else:                                              # т.к. в случае некорректного токена ответ все равно '200'
             print('Ошибка токена. Доступ к данным с VK ограничен')
         return response.json()
-        # with open('data.json') as f:          # отладка по массиву из файла (для удобства)
-        #     data = json.load(f)
-        # return data
 
     def save_file(self,url_load, name_f):                # функция записи файлов в ЯД
         url_get_link = f'{self.url_base_vk}/v1/disk/resources/upload'
         params_file = {'path': f'photos_VK/{name_f}.jpg'}
-        # данные для запроса ссылки для записи в ЯД (имя папки, имя файла)
+                                           # данные для запроса ссылки для записи в ЯД (имя папки, имя файла)
         response = requests.get(url_get_link, params=params_file, headers=self.headers_dict) # запрос ссылки в ЯД
         url_for_upload = response.json().get('href')      # получаем ссылку на запись из ответа ЯД
         response_f = requests.get(url_load)               # получаем файл с VK
@@ -62,21 +59,21 @@ class VK_API:
         count_ = 1
         data = self.get_photos()
         for item in data['response']['items']:
-            if count_ <= self.count:             # определяем кол-во файлов в запись (5 по умолчанию)
-                for el in item['sizes']:
-                    if el['type'] == 'z':        # берем данные с максимальным размером фото
-                        if item['likes']['count'] in likes_:
-                            name = f"{item['likes']['count']}_{item['date']}"   #корректируем имя файла при совпадении
-                        else:
-                            name = item['likes']['count']
-                            likes_ += [name]
-                        self.save_file(el['url'],name)                   # записывам файл через ф-цию save_file
-                        print(f'Загружено {count_} фото')                # лог загрузки файлов на Ядиск
-                        count_ += 1
-                        result += [{'file_name': f'{name}.jpg','size': el['type']}]
+            if count_ <= self.count:                     # определяем кол-во файлов в запись (5 по умолчанию)
+                size = item['sizes'][-5]['type']
+                photo_url = item['sizes'][-5]['url']
+                if item['likes']['count'] in likes_:
+                    name = f"{item['likes']['count']}_{item['date']}"    # корректируем имя файла при совпадении
+                else:
+                    name = item['likes']['count']
+                    likes_ += [name]
+                self.save_file(photo_url, name)                     # записывам файл через ф-цию save_file
+                print(f'Загружено {count_} фото')                  # лог загрузки файлов на Ядиск
+                count_ += 1
+                result += [{'file_name': f'{name}.jpg', 'size': size}]
         with open('result.json', 'w') as f:                              # запись json файла
             json.dump(result, f)
         print("Записан файл с результатами 'result.json'")                # лог записи файла json
 
 USER_1 = VK_API(User_name, token_vk, token_Yan)
-USER_1.save_files_YD()                              # ПУСК )
+USER_1.save_files_YD()
