@@ -3,6 +3,7 @@ import json
 import os
 import requests
 from pprint import pprint
+from tqdm import tqdm
 
 config = configparser.ConfigParser()                # блок чтения входных данных из ini файла
 config.read('sitings.ini')
@@ -25,7 +26,7 @@ class VkApi:
         params = {
         'access_token': self.token,
         'owner_id': self.user_id,
-        'album_id': 'profile',
+        'album_id': 'wall',
         'photo_sizes': '1',
         'v': '5.199',
         'extended': '1'
@@ -63,7 +64,7 @@ class VkApi:
         likes_list = []
         quantity = 1
         data = self.get_photos()
-        for item in data['response']['items']:
+        for item in tqdm(data['response']['items']):
             if quantity <= self.counts:                     # определяем кол-во файлов в запись (5 по умолчанию)
                 size = item['sizes'][-5]['type']
                 photo_url = item['sizes'][-5]['url']
@@ -73,7 +74,7 @@ class VkApi:
                     name = item['likes']['count']
                     likes_list += [name]
                 self.save_file(photo_url, name)                     # записывам файл через ф-цию save_file
-                print(f'Загружено {quantity} фото')                  # лог загрузки файлов на Ядиск
+                # print(f'Загружено {quantity} фото')                  # лог загрузки файлов на Ядиск
                 quantity += 1
                 result += [{'file_name': f'{name}.jpg', 'size': size}]
         with open('result.json', 'w') as f:                              # запись json файла
