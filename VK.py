@@ -1,9 +1,7 @@
 import configparser                      # импорт модулей
 import json
-#import urllib.request
 import os
 import requests
-#from urllib.parse import urlencode
 from pprint import pprint
 
 config = configparser.ConfigParser()                # блок чтения входных данных из ini файла
@@ -26,7 +24,7 @@ class VK_API:
         params = {
         'access_token': self.token,
          'owner_id': self.user_id,
-         'album_id': 'wall',
+         'album_id': 'profile',
         'photo_sizes': '1',
         'v': '5.199',
             'extended': '1'
@@ -54,7 +52,7 @@ class VK_API:
         file = response_f.content                        # получаем байтовый контент данных
         requests.put(url_for_upload, file)              # запись файла в ЯД
 
-    def save_files_YD(self):                         # функция записи
+    def save_files_YD(self):                  # функция записи
         url_create_folder = f'{self.url_base_vk}/v1/disk/resources'
         params_folder = {'path': 'photos_VK'}
         requests.put(url_create_folder, params=params_folder, headers=self.headers_dict)  #создаем папку на ЯД
@@ -75,11 +73,10 @@ class VK_API:
                         self.save_file(el['url'],name)                   # записывам файл через ф-цию save_file
                         print(f'Загружено {count_} фото')                # лог загрузки файлов на Ядиск
                         count_ += 1
-                        result += [{'file_name': f'{name}.jpg','size':el['type']}]
+                        result += [{'file_name': f'{name}.jpg','size': el['type']}]
         with open('result.json', 'w') as f:                              # запись json файла
             json.dump(result, f)
         print("Записан файл с результатами 'result.json'")                # лог записи файла json
 
-
 USER_1 = VK_API(User_name, token_vk, token_Yan)
-USER_1.save_files_YD()
+USER_1.save_files_YD()                              # ПУСК )

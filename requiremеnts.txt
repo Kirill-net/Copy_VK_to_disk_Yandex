@@ -1,0 +1,6 @@
+# python  - выполнено на версии 3.11
+configparser
+json
+os
+requests
+pprint
