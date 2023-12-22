@@ -4,3 +4,4 @@ json
 os
 requests
 pprint
+tqdm
